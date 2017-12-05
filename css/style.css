@@ -1,0 +1,104 @@
+body {
+  font-family: sans-serif;
+  background: #efefef;
+}
+
+.container-fluid {
+  max-width: 600px;
+}
+
+h1 {
+  text-align: center;
+  color: #414F86;
+}
+
+.list-group {
+  margin-bottom: 0;
+}
+
+.list-group-item, .recipeHeading {
+  padding: 0;
+  margin: 2px;
+  overflow: visible;
+}
+
+.recipeHeading {
+  background: #4A1942;
+  color: #EAEAEA;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.recipeDetails {
+  padding: 10px;
+}
+.recipeDetails h4 {
+  font-size: 12px;
+}
+
+.ingredient {
+  display: inline-block;
+  color: #FFF;
+  background: #8C93A8;
+  padding: 1px 4px;
+  margin: 2px 5px 0 0;
+}
+
+.button-wrapper {
+  float: right;
+  margin-top: -40px;
+  margin-right: 4px;
+}
+
+.modal-back {
+  background: rgba(0, 0, 0, 0.4);
+  position: absolute;
+  width: 100%;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.modal-front {
+  width: 100%;
+  min-height: 300px;
+  margin-top: 40px;
+  background: #EAEAEA;
+  opacity: 0.95;
+}
+.modal-front textarea {
+  width: 100%;
+  max-width: 540px;
+  min-height: 80px;
+}
+.modal-front input {
+  max-width: 540px;
+  width: 100%;
+}
+
+.modal-buttons {
+  text-align: center;
+  margin-top: 20px;
+  background: #4A1942;
+  padding: 20px;
+}
+
+#add-recipe {
+  background: #8C93A8;
+  padding: 10px;
+  text-align: center;
+  border-radius: 5px;
+  margin: 10px 40px;
+}
+#add-recipe input {
+  margin-right: 4px;
+  padding: 0 3px;
+}
+
+.note {
+  text-align: center;
+  color: #888;
+  margin-top: 10px;
+}

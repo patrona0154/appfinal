@@ -1,0 +1,241 @@
+var Ingredient = React.createClass({
+  render: function() {
+    return (
+      <li className="ingredient">{this.props.ingredient}</li>
+    )
+  }
+})
+
+var RecipeEntry = React.createClass({
+  
+  getInitialState: function() {
+        return { showEntry: false, showModal: false };
+    },
+    showRecipe: function() {
+       this.state.showEntry ? this.setState({ showEntry: false }) : this.setState({ showEntry: true })
+    },
+    showRecipeModal: function(e) {
+      this.state.showModal ? this.setState({ showModal: false }) : this.setState({showModal: true })
+      var c = this.props.recipe
+      this.props.handleActiveRecipe(c)
+    },
+  
+  render: function() {
+    return (
+      <div>
+        <div className="list-group-item">
+            <h4 className="list-group-item-heading recipeHeading"
+              onClick={this.showRecipe}
+            >
+              
+    <i className={this.state.showEntry ? "glyphicon glyphicon-minus" : "glyphicon glyphicon-plus"}/> {this.props.recipe.recipeName}</h4> <span className="button-wrapper">
+          <EditButton onUserClick={this.showRecipeModal} />&nbsp; 
+          <DeleteButton value={this.props.index} onClick={this.props.onDeleteClick} />
+      </span>
+          
+          { this.state.showEntry ? <RecipeDetails recipe={this.props.recipe}/> : null }
+        
+        </div>
+      { this.state.showModal ? <EditModal handleDescription={this.props.handleDescription} handleIngredients={this.props.handleIngredients} value={this.props.index} recipe={this.props.recipe} onUserClick={this.showRecipeModal} /> : null}
+      </div>
+    )
+  }
+})
+
+var DeleteButton = React.createClass({
+  render: function() {
+    
+    return (
+    
+    <button
+          onClick={this.props.onClick}
+          value={this.props.value}
+          type="button"
+          className="btn btn-default danger delete-button"
+        ><i className="glyphicon glyphicon-remove"/></button>
+    
+    )
+  }
+})
+
+var EditButton = React.createClass({
+  render: function() {
+    
+    return(
+    <button
+            onClick={this.props.onUserClick}
+            type="button"
+            className="btn btn-default edit-button"
+          >
+          <i className="glyphicon glyphicon-pencil"/></button>
+    )
+  }
+})
+
+var EditModal = React.createClass({  
+  
+  render: function() {
+     
+    return (
+      <div className="modal-back">
+        <div className="container container-fluid">
+          <div className="modal-front">
+            <h4 className="list-group-item-heading recipeHeading">Edit {this.props.recipe.recipeName}</h4>      <div className="container container-fluid">
+            <h5>Ingredients:</h5>
+            <p>seperated by commas</p>
+            <input type="text" value={this.props.recipe.ingredients} onChange={this.props.handleIngredients} placeholder="ingredients,go,here"/>
+            
+            <h5>Instructions</h5>
+            <textarea type="text" value={this.props.recipe.description} onChange={this.props.handleDescription} />
+          </div>
+            <div className="modal-buttons">
+            <button 
+              className="btn btn-default danger"
+              onClick={this.props.onUserClick}
+            ><i className="glyphicon glyphicon-ok"/> Submit
+            </button>
+            </div>
+          </div>
+        </div>
+       </div>
+      )
+  }
+})
+
+var RecipeDetails = React.createClass({
+  
+  render: function() {
+    
+    var ingredients = this.props.recipe.ingredients.map(function(ingredient, index) {
+     return <Ingredient key={index} ingredient={ingredient} />
+    });
+    
+    
+    
+    return (
+    <div>
+      <div className="recipeDetails">
+        {this.props.recipe.ingredients ? <h4>Ingredients:</h4>: null }
+        <div>{ingredients}</div>
+        {this.props.recipe.description ? <h4>Preparation Instructions:</h4>: null }
+        <p className="list-group-item-text">{this.props.recipe.description}</p>
+      </div>
+      <div className="recipeFooter">
+      
+      </div>
+    </div>
+    )
+    
+  }
+  
+})
+
+const RecipeApp = React.createClass({
+  
+  getInitialState: function() {
+    
+    return {
+      recipes: [{"recipeName":"Pizza","ingredients":["Bread","Brocolli","Tomato","Onion","Mushroom"],"description":"Add toppings to dough base and place into oven for 35 minutes on a high heat.\n\nBellissimo!"},{"recipeName":"Spaghetti","ingredients":["Spaghetti","Sauce","Tomatoes","Bacon","Garlic"],"description":"Try not to get it all over your shirt."},{"recipeName":"Meatballs","ingredients":["Minced Beef/Pork","Onions","Flour","Chili Peppers","Tomatoes","Seasoning"],"description":"Roughly chop onions and mix with minced meat. Add flour for firmness until they hold their own shape. Place into pan on high heat with a brushing of oil until browned. Reduce heat until cooked through"},{"recipeName":"Boiled Cabbage","ingredients":["Cabage","Water"],"description":"Add cabbage to boiling water. Wait. Eat. Delicious - Maybe..."},{"recipeName":"CheeseCake","ingredients":["Cream Cheese","Whipping Cream","Strawberries","Ginger Snap Biscuits","Sugar","Butter"],"description":"Crumble the biscuits into a tin and mix with the butter. Heat for a few minutes to form a solid base. Mix the cream cheese and whipping cream until heavy, then apply to top of biscuit base.\n\n\nAdd strawberries for decoration and leave to rest in fridge for 12 hours."}],
+      "active": 0
+           }
+    },
+  
+  componentWillMount: function() {
+    if (localStorage && localStorage.getItem('kristarl_recipes')) {
+        this.setState({recipes: JSON.parse(localStorage.getItem('kristarl_recipes'))})
+    }
+  },
+  
+  componentDidUpdate: function() {
+  // disable when testing so storage doesn't need to be reset
+  localStorage.setItem('kristarl_recipes', JSON.stringify(this.state.recipes))
+  },
+  
+  createNewRecipe: function(e) {
+    e.preventDefault()
+    if (e.currentTarget.value) {
+      var newRecipeValue = e.currentTarget.value
+      
+    } else {
+      var newRecipeValue = "New Recipe"
+    }
+    
+      this.setState({recipes: this.state.recipes.concat({"recipeName": newRecipeValue, "ingredients": [""], "description": ""})})
+    
+  },
+  
+  onDeleteClick: function(event, index) {
+    var targetIndex = parseInt(event.currentTarget.value)
+    this.setState(state => {
+      state.recipes.splice(targetIndex, 1);
+      return {recipes: state.recipes}
+    })
+  },
+  
+  handleDescription: function(event, index) {
+    var recipe = this.state.recipes.slice()
+    recipe[this.state.active].description = event.target.value
+    this.setState({"recipes": recipe})
+  },
+  
+  handleIngredients: function(event) {
+    var recipe = this.state.recipes.slice()
+    recipe[this.state.active].ingredients = event.target.value.split(",")
+    this.setState({"recipes": recipe})
+    console.log(this.state.recipes[this.state.active].ingredients)
+  },
+  handleActiveRecipe: function(e) {
+    this.setState({"active": this.state.recipes.indexOf(e)})
+  },
+      
+  render: function() {
+   var recipes = this.state.recipes.map(function(recipe, index) {
+     return <RecipeEntry handleActiveRecipe={this.handleActiveRecipe} key={index} index={index} recipe={recipe} onDeleteClick={this.onDeleteClick} handleDescription={this.handleDescription} handleIngredients={this.handleIngredients} />
+   }.bind(this))
+    
+    return (
+      <div>
+        <h1>React js Recipe Book</h1>
+        <div className="list-group">
+        <div>{recipes}</div>
+        </div>
+        <NewRecipe  recipes={this.state.recipes} onAddRecipe={this.createNewRecipe} />
+      </div>
+    )
+  }
+})
+
+var NewRecipe = React.createClass({
+  
+  getInitialState: function() {
+    return {value:""}
+  },
+  handleChange: function(e) {
+    this.setState({value: e.target.value})
+  },
+  
+  
+  render: function() {
+    return(
+      <form
+        id="add-recipe"
+        onSubmit={this.props.onAddRecipe}
+        value={this.state.value}
+      >
+       <input
+         placeholder="Add New Recipe"
+         type="input"
+         value={this.state.value}
+         onChange={this.handleChange}
+        />
+        <input
+          type="submit"
+          value="+ Add"
+          className="btn btn-default"
+        />
+      </form>
+    )
+  }
+})
+
+React.render( < RecipeApp /> , app);
