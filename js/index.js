@@ -264,7 +264,7 @@ var RecipeApp = React.createClass({
       React.createElement(
         "h1",
         null,
-        "React js Recipe Book"
+        "Recipe Book"
       ),
       React.createElement(
         "div",
